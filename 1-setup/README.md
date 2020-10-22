@@ -30,20 +30,11 @@ object Server extends zio.App {
   }
 }
 ```
-We start by defining a Server, derived from the trait `zio.App`. `zio.App` provides a `main` function which will be the entry point to our application. We must provide a `run` function that describes the computation to be run (in this case handle HTTP requests). `zio.App` is analogous to the cats-effect trait `IOApp`, although of course the internals are somewhat different.
 
-Inside `run`, we begin by describing our server. Let's break down each step and see what they do:
-
-`ZIO.runtime[ZEnv].flatmap { implicit rts =>`
-
-`ZIO.runtime` creates a `Runtime` which is a combination of an `Environment` and a `Platform`. A `Runtime`
-
-
-
- 
+***This is a mess, I have no idea how this works except that it does***
 
 #### Routes
-Similarly to Server, the entirety of this object is below. We want to understand at some level what is going on here. This is foundational and a good sense of what is happening is important as we get to more complex functionality.  
+As with Server, the entirety of the routes object is below. We want to understand at some level what is going on here. This is foundational and a good sense of what is happening is important as we get to more complex functionality.  
 ```scala
 object HelloRoutes {
   private val dsl = Http4sDsl[Task]
@@ -53,7 +44,47 @@ object HelloRoutes {
 
 }
 ```
+
+***This is also a mess, I have no idea how this works***
+
 ## Other Notes
 - Circe has been added as a dependency although it is not used in this version of the project. It was added to bring in all 
 the http4s dependencies, namely `http4s-circe`, at once, which requires the `circe` library to be included as well.   
- 
+
+## Running
+We will use [curl](https://curl.haxx.se/) to exercise our code.
+
+First, let's run from inside sbt:
+```
+sbt:1-setup> run
+[info] running server.Server
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+```
+
+In another console, let's make a request using curl:
+```
+> curl -sD - http://localhost:8080/hello/world
+HTTP/1.1 200 OK
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 22 Oct 2020 21:32:21 GMT
+Content-Length: 13
+
+Hello, world.
+```
+
+We are running curl with the command line option to view response headers as well as actual content (the `-D -` option; `-s` suppresses progress meter).
+
+We can also test with an invalid request:
+```
+> curl -sD - http://localhost:8080/invalid
+HTTP/1.1 404 Not Found
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 22 Oct 2020 21:35:47 GMT
+Content-Length: 9
+
+Not found
+```
+
+which also responds as expected.

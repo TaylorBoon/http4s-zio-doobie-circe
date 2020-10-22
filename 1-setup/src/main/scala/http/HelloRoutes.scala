@@ -7,9 +7,9 @@ import zio.Task
 import zio.interop.catz._
 
 object HelloRoutes {
-  private val dsl = Http4sDsl[Task]
+  private val dsl: Http4sDsl[Task] = Http4sDsl[Task]
   import dsl._
 
-  val routes = HttpRoutes.of[Task] { case GET -> Root / "hello" / name => Ok(s"Hello, $name.") }.orNotFound
+  val routes: Any = HttpRoutes.of[Task] { case GET -> (Root / "hello" / name) => Ok(s"Hello, $name.") }.orNotFound
 
 }
