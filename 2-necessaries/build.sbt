@@ -17,7 +17,11 @@ lazy val commonSettings = Seq(
     http4sCirce,
     circe,
     zio,
-    zioCats
+    zioCats,
+    zioLogging,
+    zioLoggingSlf4j,
+    logbackClassic,
+    pureconfig
   ),
   scalacOptions += "-Ymacro-annotations"//,
   //Compile / compile / wartremoverWarnings ++= Warts.unsafe
@@ -25,7 +29,7 @@ lazy val commonSettings = Seq(
 
 lazy val root = (project in file("."))
   .settings(
-    name := "atws-exp2",
+    name := "2-necessaries",
     commonSettings,
     libraryDependencies += scalaTest % Test
   )
